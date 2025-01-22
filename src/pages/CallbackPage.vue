@@ -10,7 +10,7 @@
 import { defineComponent } from 'vue';
 import { getAccessToken, getUserInfo, getGuilds } from '@/services/discordApi';
 import { db } from '@/config/firebase';
-import { collection, query, where, getDocs, setDoc, doc } from 'firebase/firestore';
+import { collection, query, where, getDocs, setDoc, doc, deleteDoc } from 'firebase/firestore';
 
 const GUILD_ID = import.meta.env.VITE_DISCORD_GUILD_ID;
 
@@ -46,10 +46,35 @@ export default defineComponent({
       const isInServer = guilds.some((guild) => guild.id === GUILD_ID);
 
       if (!isInServer) {
-        throw new Error('Bạn cần tham gia server Discord của chúng tôi để đăng ký.');
+        throw new Error('Bạn cần tham gia server Discord của chúng tôi để thực hiện thao tác này');
       }
 
       const userInfo = await getUserInfo(tokenData.access_token);
+
+      const localStorageAction = localStorage.getItem('discordState');
+
+      if (localStorageAction === 'unsubscribe') {
+        const usersRef = collection(db, 'users');
+        const q = query(usersRef, where('id', '==', userInfo.id));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          const docRef = doc(db, 'users', querySnapshot.docs[0].id);
+          await deleteDoc(docRef);
+          console.log('User đã được xóa thành công');
+        } else {
+          console.log('Không tìm thấy user để xóa');
+        }
+
+        localStorage.removeItem('oauth_action');
+
+        this.$router.push({
+          path: '/',
+          query: { message: 'Hủy đăng ký thành công' }
+        });
+        return;
+      }
+
       const avatarUrl = userInfo.avatar
         ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`
         : `https://cdn.discordapp.com/embed/avatars/${userInfo.discriminator % 5}.png`;
@@ -79,7 +104,7 @@ export default defineComponent({
       console.error('Error during login:', error);
       this.$router.push({
         path: '/error',
-        query: { message: 'Bạn phải tham gia server Discord của chúng tôi để đăng ký' }
+        query: { message: (error as Error).message}
       });
     }
   },

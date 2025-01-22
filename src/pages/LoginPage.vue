@@ -247,7 +247,9 @@ export default defineComponent({
       console.log(clientId, redirectUri);
 
       const scope = 'identify email guilds';
-      const url = `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=${scope}`;
+      const state = 'subscribe';
+      const url = `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=${scope}&state=${state}`;
+      localStorage.setItem('discordState', state);
       return url;
     }
   }

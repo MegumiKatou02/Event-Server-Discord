@@ -26,6 +26,11 @@
           Đăng ký ngay
         </span>
       </router-link>
+      <button @click="handleUnsubscribe" class="un-register-button">
+        <span class="button-content">
+          Huỷ đăng ký
+        </span>
+      </button>
     </div>
   </div>
 </template>
@@ -59,13 +64,22 @@ export default defineComponent({
     })) as User[];
   },
   methods: {
-    formatDate(dateStr: string) {
+    formatDate(dateStr: string): string {
       const date = new Date(dateStr);
       return date.toLocaleString();
     },
-    redirectURL(url: string) {
+
+    handleUnsubscribe(): void {
+      const clientId = import.meta.env.VITE_DISCORD_CLIENT_ID;
+      const redirectUri = encodeURIComponent(import.meta.env.VITE_DISCORD_REDIRECT_URI);
+      console.log(clientId, redirectUri);
+
+      const scope = 'identify email guilds';
+      const state = 'unsubscribe';
+      const url = `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=${scope}&state=${state}`;
+      localStorage.setItem('discordState', state);
       window.location.href = url;
-    }
+    },
   },
 });
 </script>
@@ -208,7 +222,10 @@ export default defineComponent({
 }
 
 .button-container {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
   margin: 2rem 0;
   position: sticky;
   bottom: 20px;
@@ -216,6 +233,24 @@ export default defineComponent({
 }
 
 .register-button {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, #e42041 0%, #f55899 100%);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 117, 140, 0.3);
+  border: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.un-register-button {
   display: inline-flex;
   align-items: center;
   background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
@@ -233,7 +268,7 @@ export default defineComponent({
   overflow: hidden;
 }
 
-.register-button::before {
+.register-button::before, .un-register-button::before {
   content: '';
   position: absolute;
   top: 0;
@@ -249,12 +284,12 @@ export default defineComponent({
   transition: 0.5s;
 }
 
-.register-button:hover {
+.register-button:hover, .un-register-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(255, 117, 140, 0.4);
 }
 
-.register-button:hover::before {
+.register-button:hover::before, .un-register-button:hover::before {
   left: 100%;
 }
 
