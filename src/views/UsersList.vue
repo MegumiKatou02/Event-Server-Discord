@@ -306,7 +306,7 @@ export default defineComponent({
 
   .scrollable-list {
     max-height: 65vh;
-    margin: 0 -0.5rem;
+    margin: 0 0.2rem;
     padding: 0.5rem 0.5rem;
   }
 
