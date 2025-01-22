@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import { db } from '@/config/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 
@@ -56,6 +56,14 @@ export default defineComponent({
     };
   },
   async mounted() {
+    const { setTheme } = inject('theme', {
+      setTheme: (isDark: boolean) => {
+        console.log(isDark);
+      },
+    });
+
+    setTheme(false);
+
     const userCollection = collection(db, 'users');
     const userSnapshot = await getDocs(userCollection);
     this.users = userSnapshot.docs.map((doc) => ({

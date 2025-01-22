@@ -1,5 +1,5 @@
 <template>
-  <div class="login-page" :class="{ 'theme-dark': isDarkMode }">
+  <div class="login-page">
     <div class="animated-background">
       <div v-for="n in 30" :key="n" class="petal"></div>
     </div>
@@ -9,7 +9,7 @@
          @mouseleave="isHovering = false">
 
       <button @click="toggleTheme" class="theme-toggle">
-        {{ isDarkMode ? '🌙' : '🌸' }}
+        {{ isDarkTheme ? '🌙' : '🌸' }}
       </button>
 
       <div class="content-wrapper">
@@ -54,7 +54,6 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #fdf5f9 0%, #ffe8f2 100%);
   position: relative;
   overflow: hidden;
 }
@@ -223,28 +222,27 @@
 </style>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, inject } from 'vue';
 
 export default defineComponent({
   setup() {
-    const isDarkMode = ref(false);
     const isHovering = ref(false);
 
-    const toggleTheme = () => {
-      isDarkMode.value = !isDarkMode.value;
-    };
+    const {isDarkTheme, toggleTheme } = inject('theme', {
+      isDarkTheme: ref(false),
+      toggleTheme: () => {}
+    });
 
     return {
-      isDarkMode,
+      isDarkTheme,
       isHovering,
-      toggleTheme
+      toggleTheme,
     };
   },
   computed: {
     loginUrl(): string {
       const clientId = import.meta.env.VITE_DISCORD_CLIENT_ID;
       const redirectUri = encodeURIComponent(import.meta.env.VITE_DISCORD_REDIRECT_URI);
-      console.log(clientId, redirectUri);
 
       const scope = 'identify email guilds';
       const state = 'subscribe';
