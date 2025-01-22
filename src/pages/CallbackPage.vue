@@ -69,7 +69,7 @@ export default defineComponent({
         localStorage.removeItem('oauth_action');
 
         this.$router.push({
-          path: '/',
+          path: '/users',
           query: { message: 'Hủy đăng ký thành công' }
         });
         return;
