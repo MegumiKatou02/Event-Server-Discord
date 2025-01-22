@@ -123,14 +123,6 @@ export default defineComponent({
   background: #ff9aa2;
 }
 
-@media (max-width: 768px) {
-  .scrollable-list {
-    max-height: 65vh;
-    margin: 0 -0.5rem;
-    padding: 0 0.5rem;
-  }
-}
-
 .users-list {
   min-height: 100vh;
   padding: 0.5rem 2rem;
@@ -213,21 +205,6 @@ export default defineComponent({
   display: flex;
   align-items: center;
   gap: 0.5rem;
-}
-
-@keyframes falling {
-  0% { background-position: 0 0; }
-  100% { background-position: 0 100vh; }
-}
-
-@media (max-width: 768px) {
-  .user-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .title {
-    font-size: 2rem;
-  }
 }
 
 .button-container {
@@ -320,6 +297,20 @@ export default defineComponent({
 }
 
 @media (max-width: 768px) {
+  .scrollable-list {
+    max-height: 65vh;
+    margin: 0 -0.5rem;
+    padding: 0 0.5rem;
+  }
+
+  .user-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .title {
+    font-size: 1.4rem;
+  }
+
   .button-container {
     margin: 1.5rem 0;
   }
@@ -327,6 +318,38 @@ export default defineComponent({
   .register-button {
     padding: 0.8rem 1.5rem;
     font-size: 1rem;
+  }
+
+  .users-list {
+    padding: 0.5rem;
+  }
+
+  .user-card {
+    padding: 0.75rem;
+  }
+
+  .user-avatar {
+    width: 40px;
+    height: 40px;
+    margin-right: 0.75rem;
+  }
+
+  .username {
+    font-size: 0.95rem;
+    margin-bottom: 0;
+  }
+
+  .registration-date {
+    display: none;
+  }
+
+  .card-content {
+    align-items: center;
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
   }
 }
 </style>
