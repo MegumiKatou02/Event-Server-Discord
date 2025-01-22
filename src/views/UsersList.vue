@@ -1,6 +1,8 @@
 <template>
   <div class="users-list">
-    <h1 class="title">🌸 Danh sách đăng ký 🌸</h1>
+    <router-link to="/" style="padding: 0;">
+      <h1 class="title">🌸 Danh sách đăng ký 🌸</h1>
+    </router-link>
     <div class="scrollable-list">
       <ul class="user-grid">
         <li v-for="user in users" :key="user.id" class="user-card">
@@ -21,7 +23,6 @@
     <div class="button-container">
       <router-link to="/" class="register-button">
         <span class="button-content">
-          <i class="fas fa-blossom"></i>
           Đăng ký ngay
         </span>
       </router-link>
@@ -62,17 +63,22 @@ export default defineComponent({
       const date = new Date(dateStr);
       return date.toLocaleString();
     },
+    redirectURL(url: string) {
+      window.location.href = url;
+    }
   },
 });
 </script>
 
 <style scoped>
 .scrollable-list {
+  background: #f7c8d2;
   max-height: 70vh;
   overflow-y: auto;
   padding-right: 8px;
   margin: 0 -1rem;
-  padding: 0 1rem;
+  padding: 1rem 1rem;
+  border-radius: 10px;
 }
 
 .scrollable-list::-webkit-scrollbar {
@@ -121,6 +127,7 @@ export default defineComponent({
   margin-bottom: 1rem;
   position: relative;
   text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+  cursor: pointer;
 }
 
 .user-grid {
