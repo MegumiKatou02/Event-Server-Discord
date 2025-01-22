@@ -143,9 +143,9 @@ export default defineComponent({
 
 .title {
   text-align: center;
-  font-family: 'Hiragino Mincho ProN', serif;
+  font-family: 'Playwrite IN', serif;
   color: #8a4b5f;
-  font-size: 2.5rem;
+  font-size: 2rem;
   margin-bottom: 1rem;
   position: relative;
   text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
