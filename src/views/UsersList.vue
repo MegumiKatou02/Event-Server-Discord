@@ -1,7 +1,7 @@
 <template>
   <div class="users-list">
     <router-link to="/" style="padding: 0;">
-      <h1 class="title">🌸 Danh sách đăng ký 🌸</h1>
+      <h1 class="title">🌸 Danh sách đăng ký ({{ users ? users.length : 'none' }}) 🌸</h1>
     </router-link>
     <div class="scrollable-list">
       <ul class="user-grid">
