@@ -30,7 +30,13 @@ export default defineComponent({
   },
   async mounted() {
     const code = new URLSearchParams(window.location.search).get('code');
-    if (!code) return;
+    if (!code) {
+      this.$router.push({
+        path: '/error',
+        query: { message: 'Không tìm thấy mã xác thực' }
+      });
+      return;
+    }
 
     try {
       const tokenData = await getAccessToken(code);
