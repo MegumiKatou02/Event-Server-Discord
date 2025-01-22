@@ -59,6 +59,7 @@ body {
   width: 100%;
   position: relative;
   overflow: hidden;
+  padding: 0;
 }
 
 .theme-dark {

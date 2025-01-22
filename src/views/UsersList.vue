@@ -297,10 +297,17 @@ export default defineComponent({
 }
 
 @media (max-width: 768px) {
+  .title {
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .scrollable-list {
     max-height: 65vh;
     margin: 0 -0.5rem;
-    padding: 0 0.5rem;
+    padding: 0.5rem 0.5rem;
   }
 
   .user-grid {
@@ -337,10 +344,6 @@ export default defineComponent({
   .username {
     font-size: 0.95rem;
     margin-bottom: 0;
-  }
-
-  .registration-date {
-    display: none;
   }
 
   .card-content {
