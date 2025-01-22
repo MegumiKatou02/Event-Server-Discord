@@ -235,8 +235,15 @@ export default defineComponent({
     });
 
     onMounted(() => {
-      setTheme('theme-normal');
       isDarkTheme.value = false;
+      const theme = localStorage.getItem('theme');
+      if (theme) {
+        setTheme(theme);
+        isDarkTheme.value = theme === 'theme-dark';
+      }
+      else {
+        setTheme('theme-normal');
+      }
     });
 
     return {

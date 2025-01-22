@@ -23,6 +23,9 @@ export default defineComponent({
     };
 
     const setTheme = (theme: string) => {
+      if (theme === 'theme-normal' || theme === 'theme-dark') {
+        localStorage.setItem('theme', theme);
+      }
       whichTheme.value = theme;
     };
 
