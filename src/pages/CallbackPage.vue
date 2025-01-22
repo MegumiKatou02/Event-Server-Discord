@@ -85,6 +85,7 @@ export default defineComponent({
 
       const userData = {
         id: userInfo.id,
+        globalname: userInfo.global_name,
         username: userInfo.username,
         discriminator: userInfo.discriminator,
         avatarUrl: avatarUrl,

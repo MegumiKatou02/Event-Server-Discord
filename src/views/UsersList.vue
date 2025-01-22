@@ -9,7 +9,7 @@
           <div class="card-content">
             <img :src="user.avatarUrl" alt="Avatar" class="user-avatar" />
             <div class="user-info">
-              <h2 class="username">{{ user.username }}</h2>
+              <h2 class="username">{{ user.globalname ? user.globalname : user.username }} ({{ user.username }})</h2>
               <p class="registration-date">
                 <i class="far fa-calendar-alt"></i>
                 {{ formatDate(user.registeredAt) }}
@@ -43,6 +43,7 @@ import { collection, getDocs } from 'firebase/firestore';
 interface User {
   id: string;
   username: string;
+  globalname: string;
   discriminator: string;
   avatarUrl: string;
   registeredAt: string;
