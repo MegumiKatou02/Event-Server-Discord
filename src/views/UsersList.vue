@@ -57,12 +57,12 @@ export default defineComponent({
   },
   async mounted() {
     const { setTheme } = inject('theme', {
-      setTheme: (isDark: boolean) => {
-        console.log(isDark);
+      setTheme: (theme: string) => {
+        console.log(theme);
       },
     });
 
-    setTheme(false);
+    setTheme('theme-pink');
 
     const userCollection = collection(db, 'users');
     const userSnapshot = await getDocs(userCollection);
@@ -133,7 +133,7 @@ export default defineComponent({
 .users-list {
   min-height: 100vh;
   padding: 0.5rem 2rem;
-  background: linear-gradient(45deg, #ffb7c5, #fff0f5), url('/assets/cherry-blossom-bg.jpg');
+  background: #ffdee5;
   background-blend-mode: soft-light;
   background-size: cover;
   background-attachment: fixed;

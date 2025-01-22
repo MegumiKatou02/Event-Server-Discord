@@ -63,7 +63,7 @@
 }
 
 .login-container {
-  width: 90%;
+  width: 95%;
   max-width: 420px;
   padding: 2.5rem;
   background: rgba(255, 255, 255, 0.95);
@@ -222,15 +222,21 @@
 </style>
 
 <script lang="ts">
-import { defineComponent, ref, inject } from 'vue';
+import { defineComponent, ref, inject, onMounted } from 'vue';
 
 export default defineComponent({
   setup() {
     const isHovering = ref(false);
 
-    const {isDarkTheme, toggleTheme } = inject('theme', {
+    const {isDarkTheme, toggleTheme, setTheme } = inject('theme', {
       isDarkTheme: ref(false),
-      toggleTheme: () => {}
+      toggleTheme: () => {},
+      setTheme: (theme: string) => {console.log(theme);}
+    });
+
+    onMounted(() => {
+      setTheme('theme-normal');
+      isDarkTheme.value = false;
     });
 
     return {
