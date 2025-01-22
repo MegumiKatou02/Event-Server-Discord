@@ -1,8 +1,10 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { getAccessToken, getUserInfo } from '@/services/discordApi';
+import { getAccessToken, getUserInfo, getGuilds } from '@/services/discordApi';
 import { db } from '@/config/firebase';
 import { collection, query, where, getDocs, setDoc, doc } from 'firebase/firestore';
+
+const GUILD_ID = import.meta.env.VITE_DISCORD_GUILD_ID;
 
 interface User {
   id: string;
@@ -24,8 +26,16 @@ export default defineComponent({
 
     try {
       const tokenData = await getAccessToken(code);
-      const userInfo = await getUserInfo(tokenData.access_token);
 
+      const guilds = await getGuilds(tokenData.access_token);
+
+      const isInServer = guilds.some((guild) => guild.id === GUILD_ID);
+
+      if (!isInServer) {
+        throw new Error('Bạn cần tham gia server Discord của chúng tôi để đăng ký.');
+      }
+
+      const userInfo = await getUserInfo(tokenData.access_token);
       const avatarUrl = userInfo.avatar
         ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`
         : `https://cdn.discordapp.com/embed/avatars/${userInfo.discriminator % 5}.png`;
@@ -53,7 +63,10 @@ export default defineComponent({
       this.$router.push('/users');
     } catch (error) {
       console.error('Error during login:', error);
-      this.$router.push('/error');
+      this.$router.push({
+        path: '/error',
+        query: { message: 'Bạn phải tham gia server Discord của chúng tôi để đăng ký' }
+      });
     }
   },
 });

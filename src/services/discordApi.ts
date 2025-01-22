@@ -31,3 +31,21 @@ export async function getUserInfo(accessToken: string) {
   const response = await axios.get(url, { headers });
   return response.data;
 }
+
+export const getGuilds = async (accessToken: string): Promise<Guild[]> => {
+  const response = await fetch('https://discord.com/api/users/@me/guilds', {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  return response.json();
+};
+
+interface Guild {
+  id: string;
+  name: string;
+  icon: string;
+  owner: boolean;
+  permissions: string;
+  features: string[];
+}

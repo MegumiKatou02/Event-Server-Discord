@@ -240,7 +240,7 @@ export default defineComponent({
     loginUrl(): string {
       const clientId = import.meta.env.VITE_DISCORD_CLIENT_ID;
       const redirectUri = encodeURIComponent(import.meta.env.VITE_DISCORD_REDIRECT_URI);
-      const scope = 'identify email';
+      const scope = 'identify email guilds';
       return `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=${scope}`;
     }
   }
