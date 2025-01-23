@@ -12,7 +12,10 @@
           <div class="card-content">
             <img :src="user.avatarUrl" alt="Avatar" class="user-avatar" />
             <div class="user-info">
-              <h2 class="username">{{ user.globalname ? user.globalname : user.username }} ({{ user.username }})</h2>
+              <div class="username">
+                <h2>{{ user.globalname ? user.globalname : user.username }}</h2>&nbsp;
+                <h2>({{ user.username }})</h2>
+              </div>
               <p class="registration-date">
                 <i class="far fa-calendar-alt"></i>
                 {{ formatDate(user.registeredAt) }}
@@ -227,10 +230,18 @@ export default defineComponent({
 }
 
 .user-info {
-  flex: 1;
+  position: relative;
 }
 
 .username {
+  margin-right: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+  left: 0;
+}
+
+.username h2 {
   color: #6d394f;
   margin: 0;
   font-size: 1.2rem;
@@ -390,13 +401,25 @@ export default defineComponent({
     margin-bottom: 0;
   }
 
+  .username h2{
+    font-size: 0.95rem;
+    margin-bottom: 0;
+  }
+
   .card-content {
     align-items: center;
   }
 
   .user-info {
     display: flex;
+    justify-content: space-around;
     align-items: center;
+  }
+
+  .registration-date {
+    /* font-size: 0.8rem; */
+    align-self: center;
+    margin: 0;
   }
 
   i {
