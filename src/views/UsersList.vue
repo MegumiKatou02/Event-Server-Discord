@@ -7,7 +7,7 @@
       <h1 class="title">🌸 Danh sách đăng ký ({{ users ? users.length : 'none' }}) 🌸</h1>
     </router-link>
     <div class="scrollable-list">
-      <p class="username" v-if="users.length === 0">Chưa có ai cả, hãy là người đầu tiên đăng ký</p>
+      <p class="username user-none" v-if="users.length === 0">Chưa có ai cả, hãy là người đầu tiên đăng ký :3</p>
       <ul class="user-grid">
         <li v-for="user in users" :key="user.id" class="user-card">
           <div class="card-content">
@@ -258,6 +258,12 @@ export default defineComponent({
   flex-wrap: wrap;
   position: relative;
   left: 0;
+}
+
+.user-none {
+  display: flex;
+  justify-self: center;
+  align-items: center;
 }
 
 .username h2, p.username {
