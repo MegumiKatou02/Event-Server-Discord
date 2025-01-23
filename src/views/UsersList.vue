@@ -7,6 +7,7 @@
       <h1 class="title">🌸 Danh sách đăng ký ({{ users ? users.length : 'none' }}) 🌸</h1>
     </router-link>
     <div class="scrollable-list">
+      <p class="username" v-if="users.length === 0">Chưa có ai cả, hãy là người đầu tiên đăng ký</p>
       <ul class="user-grid">
         <li v-for="user in users" :key="user.id" class="user-card">
           <div class="card-content">
@@ -42,9 +43,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from 'vue';
+import { defineComponent, inject, ref, onMounted, nextTick } from 'vue';
 import { db } from '@/config/firebase';
 import { collection, getDocs } from 'firebase/firestore';
+import { useRoute, useRouter } from 'vue-router';
 
 interface User {
   id: string;
@@ -57,65 +59,71 @@ interface User {
 
 export default defineComponent({
   name: 'UsersList',
-  data() {
-    return {
-      users: [] as User[],
-      notificationMessage: '',
-    };
-  },
-  async mounted() {
-    const { setTheme } = inject('theme', {
-      setTheme: (theme: string) => {
-        console.log(theme);
-      },
-    });
+  setup() {
+    const users = ref<User[]>([]);
+    const notificationMessage = ref<string>('');
+    const $route = useRoute();
+    const $router = useRouter();
 
-    setTheme('theme-pink');
-
-    const userCollection = collection(db, 'users');
-    const userSnapshot = await getDocs(userCollection);
-    this.users = userSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as User[];
-
-    if (this.$route.query.message) {
-    this.notificationMessage = this.$route.query.message as string
-    this.$nextTick(() => {
-      const notification = document.querySelector('.notification');
-      if (notification) {
-        notification.classList.add('show');
-      }
-    });
-    setTimeout(() => {
-      const notification = document.querySelector('.notification');
-      if (notification) {
-        notification.classList.remove('show');
-      }
-      setTimeout(() => {
-        this.notificationMessage = ''
-        this.$router.replace({ query: {} })
-      }, 300);
-    }, 3000)
-  }
-  },
-  methods: {
-    formatDate(dateStr: string): string {
+    const formatDate = (dateStr: string): string => {
       const date = new Date(dateStr);
       return date.toLocaleString();
-    },
+    };
 
-    handleUnsubscribe(): void {
+    const handleUnsubscribe = (): void => {
       const clientId = import.meta.env.VITE_DISCORD_CLIENT_ID;
       const redirectUri = encodeURIComponent(import.meta.env.VITE_DISCORD_REDIRECT_URI);
-      console.log(clientId, redirectUri);
 
       const scope = 'identify email guilds';
       const state = 'unsubscribe';
       const url = `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=${scope}&state=${state}`;
       localStorage.setItem('discordState', state);
       window.location.href = url;
-    },
+    }
+
+    onMounted(async () => {
+      const { setTheme } = inject('theme', {
+        setTheme: (theme: string) => {
+          console.log(theme);
+        },
+      });
+
+      setTheme('theme-pink');
+
+      const userCollection = collection(db, 'users');
+      const userSnapshot = await getDocs(userCollection);
+      users.value = userSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as User[];
+
+      if ($route.query.message) {
+        notificationMessage.value = $route.query.message as string
+        nextTick(() => {
+          const notification = document.querySelector('.notification');
+          if (notification) {
+            notification.classList.add('show');
+          }
+        });
+        setTimeout(() => {
+          const notification = document.querySelector('.notification');
+          if (notification) {
+            notification.classList.remove('show');
+          }
+          setTimeout(() => {
+            notificationMessage.value = ''
+            $router.replace({ query: {} })
+          }, 300);
+        }, 3000)
+      }
+    });
+
+    return {
+      users,
+      notificationMessage,
+      formatDate,
+      handleUnsubscribe,
+    }
   },
 });
 </script>
@@ -241,7 +249,7 @@ export default defineComponent({
   left: 0;
 }
 
-.username h2 {
+.username h2, p.username {
   color: #6d394f;
   margin: 0;
   font-size: 1.2rem;

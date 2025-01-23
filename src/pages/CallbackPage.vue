@@ -61,7 +61,6 @@ export default defineComponent({
         if (!querySnapshot.empty) {
           const docRef = doc(db, 'users', querySnapshot.docs[0].id);
           await deleteDoc(docRef);
-          console.log('User đã được xóa thành công');
         } else {
           throw new Error('Chưa tham gia giveaway mà đòi huỷ :v');
         }
