@@ -14,9 +14,10 @@
 
       <div class="content-wrapper">
         <div class="logo-container">
-          <img src="https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png"
+          <!-- <img src="https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png"
                alt="Discord Logo"
-               class="discord-logo" />
+               class="discord-logo" /> -->
+          <img title="The, cai avt nay xau vc" style="border-radius: 100px; cursor: pointer;" @click="redirectUrl('https://github.com/MegumiKatou02/Event-Server-Discord')" width="100px" height="100px" src="/images/server-image.png" alt="">
         </div>
 
         <h1 class="title">Khu Wibu Discord</h1>
@@ -234,6 +235,10 @@ export default defineComponent({
       setTheme: (theme: string) => {console.log(theme);}
     });
 
+    const redirectUrl = (url: string) => {
+      window.location.href = url;
+    }
+
     onMounted(() => {
       isDarkTheme.value = false;
       const theme = localStorage.getItem('theme');
@@ -250,6 +255,7 @@ export default defineComponent({
       isDarkTheme,
       isHovering,
       toggleTheme,
+      redirectUrl,
     };
   },
   computed: {
