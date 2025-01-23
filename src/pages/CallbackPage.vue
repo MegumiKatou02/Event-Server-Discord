@@ -63,7 +63,7 @@ export default defineComponent({
           await deleteDoc(docRef);
           console.log('User đã được xóa thành công');
         } else {
-          console.log('Không tìm thấy user để xóa');
+          throw new Error('Chưa tham gia giveaway mà đòi huỷ :v');
         }
 
         localStorage.removeItem('oauth_action');
