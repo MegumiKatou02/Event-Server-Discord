@@ -28,12 +28,17 @@
     </div>
 
     <div class="button-container">
-      <router-link to="/" class="register-button">
+      <router-link
+        to="/"
+        class="register-button"
+        :class="{ 'disabled-button': isEventOver }"
+        @click.prevent="isEventOver ? null : $router.push('/')"
+      >
         <span class="button-content">
-          Đăng ký ngay
+          {{ isEventOver ? 'Giveaway đã kết thúc' : 'Đăng ký ngay' }}
         </span>
       </router-link>
-      <button @click="handleUnsubscribe" class="un-register-button">
+      <button v-if="!isEventOver"  @click="handleUnsubscribe" class="un-register-button">
         <span class="button-content">
           Huỷ đăng ký
         </span>
@@ -43,7 +48,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, ref, onMounted, nextTick } from 'vue';
+import { defineComponent, inject, ref, onMounted, nextTick, computed } from 'vue';
 import { db } from '@/config/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { useRoute, useRouter } from 'vue-router';
@@ -64,6 +69,11 @@ export default defineComponent({
     const notificationMessage = ref<string>('');
     const $route = useRoute();
     const $router = useRouter();
+    const eventEndDate = new Date('2025-01-24T12:00:00').getTime();
+
+    const isEventOver = computed(() => {
+      return Date.now() > eventEndDate
+    })
 
     const formatDate = (dateStr: string): string => {
       const date = new Date(dateStr);
@@ -123,6 +133,7 @@ export default defineComponent({
       notificationMessage,
       formatDate,
       handleUnsubscribe,
+      isEventOver,
     }
   },
 });
@@ -297,6 +308,10 @@ export default defineComponent({
   cursor: pointer;
   position: relative;
   overflow: hidden;
+}
+
+.disabled-button {
+  background: linear-gradient(135deg, #cccccc 0%, #727272 100%)
 }
 
 .un-register-button {
