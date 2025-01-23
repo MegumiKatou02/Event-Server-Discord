@@ -2,7 +2,7 @@
   <div class='error-page'>
     <div class="error-container" :class="whichTheme">
       <div class="error-icon">
-        <img src="/images/test.png" alt="">
+        <img src="/images/error-image.png" alt="">
       </div>
       <h1>Oops! Có lỗi xảy ra</h1>
       <p class="error-message">{{ errorMessage }}</p>
