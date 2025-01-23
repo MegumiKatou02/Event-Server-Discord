@@ -80,9 +80,13 @@ h1 {
   font-weight: bold;
 }
 
+.theme-dark {
+  background-color: #1f1c2a;
+}
+
 .home-button {
   display: inline-block;
-  background-color: #4CAF50;
+  background-color: #f795a3;
   color: white;
   text-decoration: none;
   padding: 10px 20px;
@@ -91,11 +95,7 @@ h1 {
 }
 
 .home-button:hover {
-  background-color: #45a049;
-}
-
-.theme-dark {
-  background-color: #1f1c2a;
+  background-color: #fa768a;
 }
 
 .theme-dark {
