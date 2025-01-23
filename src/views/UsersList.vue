@@ -1,5 +1,8 @@
 <template>
   <div class="users-list">
+    <div v-if="notificationMessage" class="notification">
+      {{ notificationMessage }}
+    </div>
     <router-link to="/" style="padding: 0;">
       <h1 class="title">🌸 Danh sách đăng ký ({{ users ? users.length : 'none' }}) 🌸</h1>
     </router-link>
@@ -54,6 +57,7 @@ export default defineComponent({
   data() {
     return {
       users: [] as User[],
+      notificationMessage: '',
     };
   },
   async mounted() {
@@ -71,6 +75,26 @@ export default defineComponent({
       id: doc.id,
       ...doc.data(),
     })) as User[];
+
+    if (this.$route.query.message) {
+    this.notificationMessage = this.$route.query.message as string
+    this.$nextTick(() => {
+      const notification = document.querySelector('.notification');
+      if (notification) {
+        notification.classList.add('show');
+      }
+    });
+    setTimeout(() => {
+      const notification = document.querySelector('.notification');
+      if (notification) {
+        notification.classList.remove('show');
+      }
+      setTimeout(() => {
+        this.notificationMessage = ''
+        this.$router.replace({ query: {} })
+      }, 300);
+    }, 3000)
+  }
   },
   methods: {
     formatDate(dateStr: string): string {
@@ -94,6 +118,26 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #4CAF50;
+  color: white;
+  padding: 15px 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: all 0.3s ease;
+}
+
+.notification.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 .scrollable-list {
   background: #f7c8d2;
   max-height: 70vh;

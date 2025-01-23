@@ -100,7 +100,10 @@ export default defineComponent({
         await setDoc(doc(usersRef, userInfo.id), userData);
       }
 
-      this.$router.push('/users');
+      this.$router.push('/users');this.$router.push({
+        path: '/users',
+        query: { message: 'Đăng ký thành công' }
+      })
     } catch (error) {
       console.error('Error during login:', error);
       this.$router.push({
