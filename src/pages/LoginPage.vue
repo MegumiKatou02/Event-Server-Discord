@@ -14,10 +14,7 @@
 
       <div class="content-wrapper">
         <div class="logo-container">
-          <!-- <img src="https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png"
-               alt="Discord Logo"
-               class="discord-logo" /> -->
-          <img title="The, cai avt nay xau vc" style="border-radius: 100px; cursor: pointer;" @click="redirectUrl('https://github.com/MegumiKatou02/Event-Server-Discord')" width="100px" height="100px" src="/images/server-image.png" alt="">
+          <img title="The, cai avt nay xau vc"  id="server-image" @click="redirectUrl('https://github.com/MegumiKatou02/Event-Server-Discord')" src="/images/server-image.png" alt="Server Image">
         </div>
 
         <h1 class="title">Khu Wibu Discord</h1>
@@ -99,15 +96,11 @@
   transition: opacity 0.3s;
 }
 
-.discord-logo {
-  width: 80px;
-  height: auto;
-  margin-bottom: 1rem;
-  transition: transform 0.3s;
-}
-
-.discord-logo:hover {
-  transform: scale(1.1);
+#server-image {
+  border-radius: 100px;
+  cursor: pointer;
+  width: 100px;
+  height: 100px;
 }
 
 .title {
