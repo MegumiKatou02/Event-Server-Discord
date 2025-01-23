@@ -398,5 +398,9 @@ export default defineComponent({
     display: flex;
     align-items: center;
   }
+
+  i {
+    display: none;
+  }
 }
 </style>
