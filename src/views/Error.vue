@@ -6,9 +6,11 @@
       </div>
       <h1>Oops! Có lỗi xảy ra</h1>
       <p class="error-message">{{ errorMessage }}</p>
-      <router-link to="/" class="home-button">
-        Về trang chủ
-      </router-link>
+      <div class="button">
+        <router-link to="/" class="home-button">
+          Về trang chủ
+        </router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -84,18 +86,27 @@ h1 {
   background-color: #1f1c2a;
 }
 
+.button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .home-button {
-  display: inline-block;
-  background-color: #f795a3;
+  display: block;
+  width: 50%;
+  padding: 0.875rem;
+  background: linear-gradient(135deg, #ffb6c1, #ff99b6);
+  border-radius: 8px;
   color: white;
   text-decoration: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  transition: background-color 0.3s ease;
+  font-weight: 600;
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .home-button:hover {
-  background-color: #fa768a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 182, 193, 0.4);
 }
 
 .theme-dark {
