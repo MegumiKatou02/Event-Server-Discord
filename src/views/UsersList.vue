@@ -35,7 +35,7 @@
         @click.prevent="isEventOver ? $router.push('/') : handleSubscribe()"
       >
         <span class="button-content">
-          {{ isEventOver ? 'Giveaway đã kết thúc' : 'Đăng ký ngay' }}
+          {{ !isEventExist ? 'Giveaway chưa mở hoặc không tồn tại' : isEventOver ? 'Giveaway đã kết thúc' : 'Đăng ký ngay' }}
         </span>
       </button>
       <button v-if="!isEventOver"  @click="handleUnsubscribe" class="un-register-button">
@@ -64,6 +64,7 @@ export default defineComponent({
     const $route = useRoute();
     const $router = useRouter();
     const eventEndDate = ref(new Date('2025-01-24T12:00:00').getTime());
+    const isEventExist = ref(true);
 
     const eventId = ref('1');
     let currentEventId = '';
@@ -83,7 +84,7 @@ export default defineComponent({
     });
 
     const isEventOver = computed(() => {
-      return new Date().getTime() > eventEndDate.value;
+      return new Date().getTime() > eventEndDate.value || !isEventExist.value;
     })
 
     const formatDate = (dateStr: string): string => {
@@ -116,10 +117,11 @@ export default defineComponent({
     }
 
     watch(eventId, async (newValue) => {
-      if (!newValue || newValue.length >= 3) {
+      if (!newValue || newValue.trim().length >= 3) {
         console.log('Event ID is empty or invalid');
         return;
       }
+      newValue = newValue.trim();
 
       currentEventId = newValue;
 
@@ -133,10 +135,12 @@ export default defineComponent({
         }
 
         if (!eventDoc.exists()) {
-          // console.log('Event khong ton tai:', newValue);
           users.value = [];
-          // eventEndDate.value = null;
+          isEventExist.value = false;
+
           return;
+        } else {
+          isEventExist.value = true;
         }
 
         const usersRef = collection(db, 'events', newValue, 'users');
@@ -206,6 +210,7 @@ export default defineComponent({
       handleUnsubscribe,
       isEventOver,
       eventId,
+      isEventExist,
     }
   },
   components: {
