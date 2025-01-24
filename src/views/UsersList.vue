@@ -115,7 +115,7 @@ export default defineComponent({
     }
 
     watch(eventId, async (newValue) => {
-      if (!newValue) {
+      if (!newValue || newValue.length >= 3) {
         console.log('Event ID is empty or invalid');
         return;
       }
