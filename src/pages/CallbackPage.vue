@@ -56,12 +56,12 @@ export default defineComponent({
       const localStorageAction = localStorage.getItem('discordState');
 
       if (localStorageAction === 'unsubscribe') {
-        const usersRef = collection(db, 'events', eventId?.toString().trim() ?? '1', 'users');
+        const usersRef = collection(db, 'events', eventId?.toString().trim() ?? '0', 'users');
         const q = query(usersRef, where('id', '==', userInfo.id));
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
-          const docRef = doc(db, 'events', eventId?.toString().trim() ?? '1', 'users', querySnapshot.docs[0].id);
+          const docRef = doc(db, 'events', eventId?.toString().trim() ?? '0', 'users', querySnapshot.docs[0].id);
           await deleteDoc(docRef);
         } else {
           throw new Error('Chưa tham gia giveaway mà đòi huỷ :v');
@@ -76,7 +76,7 @@ export default defineComponent({
         return;
       }
 
-      const currentDateEvent = await getDateEvent(eventId ?? '1');
+      const currentDateEvent = await getDateEvent(eventId ?? '0');
 
       if (new Date().getTime() > new Date(currentDateEvent).getTime()) {
         this.$router.push({
@@ -93,7 +93,7 @@ export default defineComponent({
         ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`
         : `https://cdn.discordapp.com/embed/avatars/${userInfo.discriminator % 5}.png`;
 
-      const usersRef = collection(db, 'events', eventId?.toString().trim() ?? '1', 'users');
+      const usersRef = collection(db, 'events', eventId?.toString().trim() ?? '0', 'users');
       const q = query(usersRef, where('id', '==', userInfo.id));
       const querySnapshot = await getDocs(q);
 
@@ -108,7 +108,7 @@ export default defineComponent({
       };
 
       if (!querySnapshot.empty) {
-        const docRef = doc(db, 'events', eventId?.toString().trim() ?? '1', 'users', querySnapshot.docs[0].id);
+        const docRef = doc(db, 'events', eventId?.toString().trim() ?? '0', 'users', querySnapshot.docs[0].id);
         await setDoc(docRef, userData, { merge: true });
       } else {
         await setDoc(doc(usersRef, userInfo.id), userData);
