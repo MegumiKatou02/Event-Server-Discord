@@ -81,7 +81,10 @@ export default defineComponent({
       if (new Date().getTime() > new Date(currentDateEvent).getTime()) {
         this.$router.push({
           path: '/users',
-          query: { message: 'Hiện tại không có giveaway nào đang mở' }
+          query: {
+            message: 'Hiện tại không có giveaway nào đang mở',
+            status: 'error'
+          }
         });
         return;
       }
