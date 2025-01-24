@@ -368,10 +368,6 @@ export default defineComponent({
   z-index: 10;
 }
 
-.disabled-button {
-  background: linear-gradient(135deg, #cccccc 0%, #727272 100%)
-}
-
 .register-button,
 .un-register-button {
   display: inline-flex;
@@ -388,6 +384,10 @@ export default defineComponent({
   cursor: pointer;
   position: relative;
   overflow: hidden;
+}
+
+.register-button.disabled-button {
+  background: linear-gradient(135deg, #cccccc 0%, #727272 100%)
 }
 
 .register-button {
