@@ -14,25 +14,25 @@
           @click="handleSearch"
           class="search-button"
         >
-          Search
+          Tìm kiếm
         </button>
       </div>
 
       <div class="filter-section">
         <div class="filter-group">
-          <label class="filter-label">Filter By:</label>
+          <label class="filter-label">Lọc theo:</label>
           <select v-model="filterBy" class="filter-select">
             <option value="id">ID</option>
-            <option value="globalname">Name</option>
-            <option value="registeredAt">Date</option>
+            <option value="globalname">Tên</option>
+            <option value="registeredAt">Ngày đăng ký</option>
           </select>
         </div>
 
         <div class="filter-group">
-          <label class="filter-label">Sort Order:</label>
+          <label class="filter-label">Thứ tự:</label>
           <select v-model="sortOrder" class="filter-select">
-            <option value="asc">Ascending</option>
-            <option value="desc">Descending</option>
+            <option value="asc">Tăng dần</option>
+            <option value="desc">Giảm dần</option>
           </select>
         </div>
 
@@ -40,7 +40,7 @@
           @click="applyFilters"
           class="filter-button"
         >
-          Apply Filters
+          Lọc dữ liệu
         </button>
       </div>
     </div>
@@ -141,7 +141,6 @@ export default defineComponent({
   font-size: 2rem;
   margin-bottom: 1rem;
   text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.5);
-  cursor: pointer;
 }
 
 .search-wrapper {
