@@ -1,4 +1,5 @@
 <template>
+  <QueryPage id="query-page-show" :eventCode="eventId" :users="users" />
   <div class="users-list">
     <div v-if="notificationMessage" class="notification">
       {{ notificationMessage }}
@@ -28,16 +29,15 @@
     </div>
 
     <div class="button-container">
-      <router-link
-        to="/"
-        class="register-button"
-        :class="{ 'disabled-button': isEventOver }"
-        @click.prevent="isEventOver ? null : $router.push('/')"
-      >
-        <span class="button-content">
-          {{ isEventOver ? 'Giveaway đã kết thúc' : 'Đăng ký ngay' }}
-        </span>
-      </router-link>
+      <button
+      class="register-button"
+      :class="{ 'disabled-button': isEventOver }"
+      @click.prevent="isEventOver ? $router.push('/') : handleSubscribe()"
+    >
+      <span class="button-content">
+        {{ isEventOver ? 'Giveaway đã kết thúc' : 'Đăng ký ngay' }}
+      </span>
+    </button>
       <button v-if="!isEventOver"  @click="handleUnsubscribe" class="un-register-button">
         <span class="button-content">
           Huỷ đăng ký
@@ -48,19 +48,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, ref, onMounted, nextTick, computed } from 'vue';
+import { defineComponent, inject, ref, onMounted, nextTick, computed, provide, watch } from 'vue';
 import { db } from '@/config/firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { useRoute, useRouter } from 'vue-router';
-
-interface User {
-  id: string;
-  username: string;
-  globalname: string;
-  discriminator: string;
-  avatarUrl: string;
-  registeredAt: string;
-}
+import QueryPage from '@/components/QueryPage.vue';
+import { CurrentEvent, getDateEvent } from '@/services/firebaseService';
+import type { User } from '@/types/users';
 
 export default defineComponent({
   name: 'UsersList',
@@ -69,10 +63,27 @@ export default defineComponent({
     const notificationMessage = ref<string>('');
     const $route = useRoute();
     const $router = useRouter();
-    const eventEndDate = new Date('2025-01-24T12:00:00').getTime();
+    const eventEndDate = ref(new Date('2025-01-24T12:00:00').getTime());
+
+    const eventId = ref('1');
+    let currentEventId = '';
+
+    provide('message', {
+      eventId,
+      updateMessage: (newValue: string) => {
+        eventId.value = newValue;
+      },
+    });
+
+    provide('userslist', {
+      users,
+      updateUsers: (usersList: User[]) => {
+        users.value = usersList;
+      }
+    });
 
     const isEventOver = computed(() => {
-      return Date.now() > eventEndDate
+      return new Date().getTime() > eventEndDate.value;
     })
 
     const formatDate = (dateStr: string): string => {
@@ -80,16 +91,65 @@ export default defineComponent({
       return date.toLocaleString();
     };
 
+    const handleSubscribe = (): void => {
+      const clientId = import.meta.env.VITE_DISCORD_CLIENT_ID;
+      const redirectUri = encodeURIComponent(import.meta.env.VITE_DISCORD_REDIRECT_URI);
+
+      const scope = 'identify email guilds';
+      const state = 'subscribe';
+      const url = `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=${scope}`;
+      localStorage.setItem('discordState', state);
+      localStorage.setItem('eventId', eventId.value);
+      window.location.href = url;
+    }
+
     const handleUnsubscribe = (): void => {
       const clientId = import.meta.env.VITE_DISCORD_CLIENT_ID;
       const redirectUri = encodeURIComponent(import.meta.env.VITE_DISCORD_REDIRECT_URI);
 
       const scope = 'identify email guilds';
       const state = 'unsubscribe';
-      const url = `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=${scope}&state=${state}`;
+      const url = `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=${scope}`;
       localStorage.setItem('discordState', state);
       window.location.href = url;
     }
+
+    watch(eventId, async (newValue) => {
+      if (!newValue) {
+        console.log('Event ID is empty or invalid');
+        return;
+      }
+
+      currentEventId = newValue;
+
+      try {
+        const eventDocRef = doc(db, 'events', newValue);
+        const eventDoc = await getDoc(eventDocRef);
+
+        if (currentEventId !== newValue) {
+          console.log('Event ID changed during processing, skipping...');
+          return;
+        }
+
+        if (!eventDoc.exists()) {
+          // console.log('Event khong ton tai:', newValue);
+          users.value = [];
+          // eventEndDate.value = null;
+          return;
+        }
+
+        const usersRef = collection(db, 'events', newValue, 'users');
+        const userSnapshot = await getDocs(usersRef);
+        users.value = userSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as User[];
+
+        eventEndDate.value = new Date(eventDoc.data().endDate).getTime();
+      } catch (error) {
+        console.log('Lỗi:', error);
+      }
+    });
 
     onMounted(async () => {
       const { setTheme } = inject('theme', {
@@ -100,8 +160,12 @@ export default defineComponent({
 
       setTheme('theme-pink');
 
-      const userCollection = collection(db, 'users');
+      eventId.value = (await CurrentEvent()).toString().trim();
+      eventEndDate.value = new Date(await getDateEvent(eventId.value)).getTime();
+
+      const userCollection = collection(db, 'events', eventId.value, 'users');
       const userSnapshot = await getDocs(userCollection);
+
       users.value = userSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
@@ -132,9 +196,14 @@ export default defineComponent({
       users,
       notificationMessage,
       formatDate,
+      handleSubscribe,
       handleUnsubscribe,
       isEventOver,
+      eventId,
     }
+  },
+  components: {
+    QueryPage,
   },
 });
 </script>
@@ -381,6 +450,10 @@ export default defineComponent({
 }
 
 @media (max-width: 768px) {
+  #query-page-show {
+    display: none;
+  }
+
   .title {
     height: 4rem;
     display: flex;

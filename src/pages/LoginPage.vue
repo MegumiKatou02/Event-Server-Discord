@@ -217,6 +217,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, inject, onMounted } from 'vue';
+import { CurrentEvent } from '@/services/firebaseService';
 
 export default defineComponent({
   setup() {
@@ -249,16 +250,22 @@ export default defineComponent({
       isHovering,
       toggleTheme,
       redirectUrl,
+      CurrentEvent,
     };
   },
   computed: {
     loginUrl(): string {
+      (async () => {
+        const eventId = await this.CurrentEvent();
+        localStorage.setItem('eventId', eventId.toString().trim());
+      })();
+
       const clientId = import.meta.env.VITE_DISCORD_CLIENT_ID;
       const redirectUri = encodeURIComponent(import.meta.env.VITE_DISCORD_REDIRECT_URI);
 
       const scope = 'identify email guilds';
       const state = 'subscribe';
-      const url = `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=${scope}&state=${state}`;
+      const url = `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=${scope}`;
       localStorage.setItem('discordState', state);
       return url;
     }

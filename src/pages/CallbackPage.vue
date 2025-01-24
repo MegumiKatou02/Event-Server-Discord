@@ -11,6 +11,7 @@ import { defineComponent } from 'vue';
 import { getAccessToken, getUserInfo, getGuilds } from '@/services/discordApi';
 import { db } from '@/config/firebase';
 import { collection, query, where, getDocs, setDoc, doc, deleteDoc } from 'firebase/firestore';
+import { getDateEvent } from '@/services/firebaseService';
 
 const GUILD_ID = import.meta.env.VITE_DISCORD_GUILD_ID;
 
@@ -30,6 +31,7 @@ export default defineComponent({
   },
   async mounted() {
     const code = new URLSearchParams(window.location.search).get('code');
+    const eventId = localStorage.getItem('eventId');
     if (!code) {
       this.$router.push({
         path: '/error',
@@ -54,12 +56,12 @@ export default defineComponent({
       const localStorageAction = localStorage.getItem('discordState');
 
       if (localStorageAction === 'unsubscribe') {
-        const usersRef = collection(db, 'users');
+        const usersRef = collection(db, 'events', eventId?.toString().trim() ?? '1', 'users');
         const q = query(usersRef, where('id', '==', userInfo.id));
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
-          const docRef = doc(db, 'users', querySnapshot.docs[0].id);
+          const docRef = doc(db, 'events', eventId?.toString().trim() ?? '1', 'users', querySnapshot.docs[0].id);
           await deleteDoc(docRef);
         } else {
           throw new Error('Chưa tham gia giveaway mà đòi huỷ :v');
@@ -74,11 +76,21 @@ export default defineComponent({
         return;
       }
 
+      const currentDateEvent = await getDateEvent(eventId ?? '1');
+
+      if (new Date().getTime() > new Date(currentDateEvent).getTime()) {
+        this.$router.push({
+          path: '/users',
+          query: { message: 'Hiện tại không có giveaway nào đang mở' }
+        });
+        return;
+      }
+
       const avatarUrl = userInfo.avatar
         ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`
         : `https://cdn.discordapp.com/embed/avatars/${userInfo.discriminator % 5}.png`;
 
-      const usersRef = collection(db, 'users');
+      const usersRef = collection(db, 'events', eventId?.toString().trim() ?? '1', 'users');
       const q = query(usersRef, where('id', '==', userInfo.id));
       const querySnapshot = await getDocs(q);
 
@@ -93,13 +105,14 @@ export default defineComponent({
       };
 
       if (!querySnapshot.empty) {
-        const docRef = doc(db, 'users', querySnapshot.docs[0].id);
+        const docRef = doc(db, 'events', eventId?.toString().trim() ?? '1', 'users', querySnapshot.docs[0].id);
         await setDoc(docRef, userData, { merge: true });
       } else {
         await setDoc(doc(usersRef, userInfo.id), userData);
       }
 
-      this.$router.push('/users');this.$router.push({
+      this.$router.push('/users');
+      this.$router.push({
         path: '/users',
         query: { message: 'Đăng ký thành công' }
       })
