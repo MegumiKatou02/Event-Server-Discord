@@ -30,14 +30,14 @@
 
     <div class="button-container">
       <button
-      class="register-button"
-      :class="{ 'disabled-button': isEventOver }"
-      @click.prevent="isEventOver ? $router.push('/') : handleSubscribe()"
-    >
-      <span class="button-content">
-        {{ isEventOver ? 'Giveaway đã kết thúc' : 'Đăng ký ngay' }}
-      </span>
-    </button>
+        class="register-button"
+        :class="{ 'disabled-button': isEventOver }"
+        @click.prevent="isEventOver ? $router.push('/') : handleSubscribe()"
+      >
+        <span class="button-content">
+          {{ isEventOver ? 'Giveaway đã kết thúc' : 'Đăng ký ngay' }}
+        </span>
+      </button>
       <button v-if="!isEventOver"  @click="handleUnsubscribe" class="un-register-button">
         <span class="button-content">
           Huỷ đăng ký
@@ -368,32 +368,14 @@ export default defineComponent({
   z-index: 10;
 }
 
-.register-button {
-  display: inline-flex;
-  align-items: center;
-  background: linear-gradient(135deg, #e42041 0%, #f55899 100%);
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 30px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(255, 117, 140, 0.3);
-  border: none;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-
 .disabled-button {
   background: linear-gradient(135deg, #cccccc 0%, #727272 100%)
 }
 
+.register-button,
 .un-register-button {
   display: inline-flex;
   align-items: center;
-  background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
   color: white;
   padding: 1rem 2rem;
   border-radius: 30px;
@@ -406,6 +388,14 @@ export default defineComponent({
   cursor: pointer;
   position: relative;
   overflow: hidden;
+}
+
+.register-button {
+  background: linear-gradient(135deg, #e42041 0%, #f55899 100%);
+}
+
+.un-register-button {
+  background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
 }
 
 .register-button::before, .un-register-button::before {
@@ -478,11 +468,6 @@ export default defineComponent({
 
   .button-container {
     margin: 1.5rem 0;
-  }
-
-  .register-button {
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
   }
 
   .users-list {
