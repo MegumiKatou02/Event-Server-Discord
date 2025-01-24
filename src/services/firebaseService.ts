@@ -7,12 +7,12 @@ const CurrentEvent = async (): Promise<number> => {
 
   const currentEvent = eventsSnapshot.docs.length;
 
-  return currentEvent;
+  return currentEvent - 1; // khong tinh so 0
 }
 
 const getDateEvent = async (eventId: string): Promise<string> => {
   const info = await getDoc(doc(db, 'events', eventId));
-  const endDate = info.data()?.endDate ?? '';
+  const endDate = info.data()?.endDate ?? '2000-01-01T12:00:00';
   return endDate;
 }
 
