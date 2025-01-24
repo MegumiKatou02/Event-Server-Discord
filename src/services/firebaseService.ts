@@ -1,11 +1,11 @@
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc, getCountFromServer } from "firebase/firestore";
 import { db } from "@/config/firebase";
 
 const CurrentEvent = async (): Promise<number> => {
   const eventsCollection = collection(db, 'events');
-  const eventsSnapshot = await getDocs(eventsCollection);
+  const eventsSnapshot = await getCountFromServer(eventsCollection);
 
-  const currentEvent = eventsSnapshot.docs.length;
+  const currentEvent = eventsSnapshot.data().count;
 
   return currentEvent - 1; // khong tinh so 0
 }
