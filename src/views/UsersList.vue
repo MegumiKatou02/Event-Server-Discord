@@ -173,11 +173,16 @@ export default defineComponent({
       })) as User[];
 
       if ($route.query.message) {
-        notificationMessage.value = $route.query.message as string
+        notificationMessage.value = $route.query.message as string;
+        const status = $route.query.status as string;
         nextTick(() => {
-          const notification = document.querySelector('.notification');
+          const notification = document.querySelector('.notification') as HTMLElement;
           if (notification) {
             notification.classList.add('show');
+            if (status && status.trim() === 'error') {
+              notification.style.backgroundColor = '#fa582a';
+              notification.style.color = 'black';
+            }
           }
         });
         setTimeout(() => {
