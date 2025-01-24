@@ -111,6 +111,7 @@ export default defineComponent({
       const state = 'unsubscribe';
       const url = `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=${scope}`;
       localStorage.setItem('discordState', state);
+      localStorage.setItem('eventId', eventId.value);
       window.location.href = url;
     }
 
