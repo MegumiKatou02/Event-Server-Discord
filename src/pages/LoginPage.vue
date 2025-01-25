@@ -243,7 +243,7 @@ export default defineComponent({
         const eventId = await CurrentEvent();
         $router.push({
           path: '/users',
-          query: { event:  eventId},
+          query: { event:  eventId },
         });
       })();
     };
