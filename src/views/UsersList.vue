@@ -48,13 +48,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, ref, onMounted, nextTick, computed, provide, watch } from 'vue';
+import { defineComponent, inject, ref, onMounted, computed, provide, watch } from 'vue';
 import { db } from '@/config/firebase';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { useRoute, useRouter } from 'vue-router';
 import QueryPage from '@/components/QueryPage.vue';
 import { getDateEvent } from '@/services/firebaseService';
 import type { User } from '@/types/users';
+import { sendNotification } from '@/utils/notification';
 
 export default defineComponent({
   name: 'UsersList',
@@ -118,7 +119,8 @@ export default defineComponent({
 
     watch(eventId, async (newValue) => {
       if (!newValue || newValue.trim().length >= 3) {
-        console.log('Event ID is empty or invalid');
+        // console.log('Event ID is empty or invalid');
+        sendNotification('Event ID không hợp lệ', 'error', notificationMessage);
         return;
       }
       newValue = newValue.trim();
@@ -135,6 +137,7 @@ export default defineComponent({
 
         if (currentEventId !== newValue) {
           console.log('Event ID changed during processing, skipping...');
+          sendNotification('Event ID bị lỗi', 'error', notificationMessage);
           return;
         }
 
@@ -169,7 +172,6 @@ export default defineComponent({
 
       setTheme('theme-pink');
 
-      // eventId.value = (await CurrentEvent()).toString().trim();
       eventEndDate.value = new Date(await getDateEvent(eventId.value)).getTime();
 
       const userCollection = collection(db, 'events', eventId.value, 'users');
@@ -180,33 +182,18 @@ export default defineComponent({
         ...doc.data(),
       })) as User[];
 
-      if ($route.query.message) {
-        notificationMessage.value = $route.query.message as string;
-        const status = $route.query.status as string;
-        nextTick(() => {
-          const notification = document.querySelector('.notification') as HTMLElement;
-          if (notification) {
-            notification.classList.add('show');
-            if (status && status.trim() === 'error') {
-              notification.style.backgroundColor = '#fa582a';
-              notification.style.color = 'black';
-            }
-          }
-        });
-        setTimeout(() => {
-          const notification = document.querySelector('.notification');
-          if (notification) {
-            notification.classList.remove('show');
-          }
-          setTimeout(() => {
-            notificationMessage.value = ''
-            $router.replace({ query: { event: eventId.value } })
-          }, 300);
-        }, 3000)
-      }
       if ($route.query.event) {
         eventId.value = $route.query.event as string;
       }
+
+      if ($route.query.message) {
+        const message: string = $route.query.message as string;
+        const status: string = $route.query.status as string
+        sendNotification(message, status, notificationMessage, () => {
+          $router.replace({ query: { event: eventId.value } })
+        });
+      }
+
     });
 
     return {
