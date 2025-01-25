@@ -30,9 +30,12 @@
           </span>
         </a>
 
-        <router-link to="/users" class="login-button" style="margin-top: 1rem;">
+        <!-- <router-link to="/users" class="login-button" style="margin-top: 1rem;">
           <span class="button-content">Xem danh sách</span>
-        </router-link>
+        </router-link> -->
+        <a class="login-button" style="margin-top: 1rem;" @click="redirectUsersList">
+          <span class="button-content">Xem danh sách</span>
+        </a>
       </div>
 
       <div class="footer">
@@ -218,10 +221,12 @@
 <script lang="ts">
 import { defineComponent, ref, inject, onMounted } from 'vue';
 import { CurrentEvent } from '@/services/firebaseService';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   setup() {
     const isHovering = ref(false);
+    const $router = useRouter();
 
     const {isDarkTheme, toggleTheme, setTheme } = inject('theme', {
       isDarkTheme: ref(false),
@@ -232,6 +237,16 @@ export default defineComponent({
     const redirectUrl = (url: string) => {
       window.location.href = url;
     }
+
+    const redirectUsersList = () => {
+      (async () => {
+        const eventId = await CurrentEvent();
+        $router.push({
+          path: '/users',
+          query: { event:  eventId},
+        });
+      })();
+    };
 
     onMounted(() => {
       isDarkTheme.value = false;
@@ -251,6 +266,7 @@ export default defineComponent({
       toggleTheme,
       redirectUrl,
       CurrentEvent,
+      redirectUsersList
     };
   },
   computed: {

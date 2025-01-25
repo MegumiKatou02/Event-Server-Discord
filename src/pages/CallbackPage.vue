@@ -32,6 +32,7 @@ export default defineComponent({
   async mounted() {
     const code = new URLSearchParams(window.location.search).get('code');
     const eventId = localStorage.getItem('eventId');
+
     if (!code) {
       this.$router.push({
         path: '/error',
@@ -55,6 +56,19 @@ export default defineComponent({
 
       const localStorageAction = localStorage.getItem('discordState');
 
+      const currentDateEvent = await getDateEvent(eventId ?? '0');
+
+      if (new Date().getTime() > new Date(currentDateEvent).getTime()) {
+        this.$router.push({
+          path: '/users',
+          query: {
+            message: 'Hiện tại không có giveaway nào đang mở',
+            status: 'error'
+          }
+        });
+        return;
+      }
+
       if (localStorageAction === 'unsubscribe') {
         const usersRef = collection(db, 'events', eventId?.toString().trim() ?? '0', 'users');
         const q = query(usersRef, where('id', '==', userInfo.id));
@@ -71,19 +85,9 @@ export default defineComponent({
 
         this.$router.push({
           path: '/users',
-          query: { message: 'Hủy đăng ký thành công' }
-        });
-        return;
-      }
-
-      const currentDateEvent = await getDateEvent(eventId ?? '0');
-
-      if (new Date().getTime() > new Date(currentDateEvent).getTime()) {
-        this.$router.push({
-          path: '/users',
           query: {
-            message: 'Hiện tại không có giveaway nào đang mở',
-            status: 'error'
+            message: 'Hủy đăng ký thành công',
+            event: eventId
           }
         });
         return;
@@ -117,7 +121,10 @@ export default defineComponent({
       this.$router.push('/users');
       this.$router.push({
         path: '/users',
-        query: { message: 'Đăng ký thành công' }
+        query: {
+          message: 'Đăng ký thành công',
+          event: eventId
+        }
       })
     } catch (error) {
       console.error('Error during login:', error);
