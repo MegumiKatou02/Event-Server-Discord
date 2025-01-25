@@ -7,7 +7,7 @@
     <router-link to="/" style="padding: 0;">
       <h1 class="title">🌸 Danh sách đăng ký ({{ users ? users.length : 'none' }}) 🌸</h1>
     </router-link>
-    <div class="scrollable-list">
+    <div v-if="eventId !== '0'" class="scrollable-list">
       <p class="username user-none" v-if="users.length === 0">Chưa có ai cả, hãy là người đầu tiên đăng ký :3</p>
       <ul class="user-grid">
         <li v-for="user in users" :key="user.id" class="user-card">
@@ -53,7 +53,7 @@ import { db } from '@/config/firebase';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { useRoute, useRouter } from 'vue-router';
 import QueryPage from '@/components/QueryPage.vue';
-import { CurrentEvent, getDateEvent } from '@/services/firebaseService';
+import { getDateEvent } from '@/services/firebaseService';
 import type { User } from '@/types/users';
 
 export default defineComponent({
@@ -125,6 +125,10 @@ export default defineComponent({
 
       currentEventId = newValue;
 
+      $router.push({
+        query: { event: newValue }
+      })
+
       try {
         const eventDocRef = doc(db, 'events', newValue);
         const eventDoc = await getDoc(eventDocRef);
@@ -165,7 +169,7 @@ export default defineComponent({
 
       setTheme('theme-pink');
 
-      eventId.value = (await CurrentEvent()).toString().trim();
+      // eventId.value = (await CurrentEvent()).toString().trim();
       eventEndDate.value = new Date(await getDateEvent(eventId.value)).getTime();
 
       const userCollection = collection(db, 'events', eventId.value, 'users');
@@ -196,9 +200,12 @@ export default defineComponent({
           }
           setTimeout(() => {
             notificationMessage.value = ''
-            $router.replace({ query: {} })
+            $router.replace({ query: { event: eventId.value } })
           }, 300);
         }, 3000)
+      }
+      if ($route.query.event) {
+        eventId.value = $route.query.event as string;
       }
     });
 
