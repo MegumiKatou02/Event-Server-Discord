@@ -117,9 +117,10 @@ export default defineComponent({
       window.location.href = url;
     }
 
-    watch(eventId, async (newValue) => {
+    watch(eventId, async (newValue, oldValue) => {
       if (!newValue || newValue.trim().length >= 3) {
         // console.log('Event ID is empty or invalid');
+        eventId.value = oldValue;
         sendNotification('Event ID không hợp lệ', 'error', notificationMessage);
         return;
       }
