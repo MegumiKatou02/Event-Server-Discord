@@ -56,6 +56,7 @@ import QueryPage from '@/components/QueryPage.vue';
 import { getDateEvent } from '@/services/firebaseService';
 import type { User } from '@/types/users';
 import { sendNotification } from '@/utils/notification';
+import { isPositiveInteger } from '@/utils/stringValidation';
 
 export default defineComponent({
   name: 'UsersList',
@@ -118,6 +119,12 @@ export default defineComponent({
     }
 
     watch(eventId, async (newValue, oldValue) => {
+      if (!isPositiveInteger(newValue)) {
+        eventId.value = oldValue;
+        sendNotification(`Event ID không hợp lệ`, 'error', notificationMessage);
+        return;
+      }
+
       if (!newValue || newValue.trim().length >= 3) {
         // console.log('Event ID is empty or invalid');
         eventId.value = oldValue;
