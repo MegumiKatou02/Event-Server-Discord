@@ -49,6 +49,77 @@
   </div>
 </template>
 
+<script lang="ts">
+import { defineComponent, ref, inject, onMounted } from 'vue';
+import { CurrentEvent } from '@/services/firebaseService';
+import { useRouter } from 'vue-router';
+
+export default defineComponent({
+  setup() {
+    const isHovering = ref(false);
+    const $router = useRouter();
+
+    const {isDarkTheme, toggleTheme, setTheme } = inject('theme', {
+      isDarkTheme: ref(false),
+      toggleTheme: () => {},
+      setTheme: (theme: string) => {console.log(theme);}
+    });
+
+    const redirectUrl = (url: string) => {
+      window.location.href = url;
+    }
+
+    const redirectUsersList = () => {
+      (async () => {
+        const eventId = await CurrentEvent();
+        $router.push({
+          path: '/users',
+          query: { event:  eventId },
+        });
+      })();
+    };
+
+    onMounted(() => {
+      isDarkTheme.value = false;
+      const theme = localStorage.getItem('theme');
+      if (theme) {
+        setTheme(theme);
+        isDarkTheme.value = theme === 'theme-dark';
+      }
+      else {
+        setTheme('theme-normal');
+      }
+    });
+
+    return {
+      isDarkTheme,
+      isHovering,
+      toggleTheme,
+      redirectUrl,
+      CurrentEvent,
+      redirectUsersList
+    };
+  },
+  computed: {
+    loginUrl(): string {
+      (async () => {
+        const eventId = await this.CurrentEvent();
+        localStorage.setItem('eventId', eventId.toString().trim());
+      })();
+
+      const clientId = import.meta.env.VITE_DISCORD_CLIENT_ID;
+      const redirectUri = encodeURIComponent(import.meta.env.VITE_DISCORD_REDIRECT_URI);
+
+      const scope = 'identify guilds';
+      const state = 'subscribe';
+      const url = `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=${scope}`;
+      localStorage.setItem('discordState', state);
+      return url;
+    }
+  }
+});
+</script>
+
 <style scoped>
 .login-page {
   display: flex;
@@ -217,74 +288,3 @@
   }
 }
 </style>
-
-<script lang="ts">
-import { defineComponent, ref, inject, onMounted } from 'vue';
-import { CurrentEvent } from '@/services/firebaseService';
-import { useRouter } from 'vue-router';
-
-export default defineComponent({
-  setup() {
-    const isHovering = ref(false);
-    const $router = useRouter();
-
-    const {isDarkTheme, toggleTheme, setTheme } = inject('theme', {
-      isDarkTheme: ref(false),
-      toggleTheme: () => {},
-      setTheme: (theme: string) => {console.log(theme);}
-    });
-
-    const redirectUrl = (url: string) => {
-      window.location.href = url;
-    }
-
-    const redirectUsersList = () => {
-      (async () => {
-        const eventId = await CurrentEvent();
-        $router.push({
-          path: '/users',
-          query: { event:  eventId },
-        });
-      })();
-    };
-
-    onMounted(() => {
-      isDarkTheme.value = false;
-      const theme = localStorage.getItem('theme');
-      if (theme) {
-        setTheme(theme);
-        isDarkTheme.value = theme === 'theme-dark';
-      }
-      else {
-        setTheme('theme-normal');
-      }
-    });
-
-    return {
-      isDarkTheme,
-      isHovering,
-      toggleTheme,
-      redirectUrl,
-      CurrentEvent,
-      redirectUsersList
-    };
-  },
-  computed: {
-    loginUrl(): string {
-      (async () => {
-        const eventId = await this.CurrentEvent();
-        localStorage.setItem('eventId', eventId.toString().trim());
-      })();
-
-      const clientId = import.meta.env.VITE_DISCORD_CLIENT_ID;
-      const redirectUri = encodeURIComponent(import.meta.env.VITE_DISCORD_REDIRECT_URI);
-
-      const scope = 'identify guilds';
-      const state = 'subscribe';
-      const url = `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=${scope}`;
-      localStorage.setItem('discordState', state);
-      return url;
-    }
-  }
-});
-</script>
