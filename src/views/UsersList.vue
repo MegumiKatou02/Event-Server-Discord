@@ -1,5 +1,5 @@
 <template>
-  <QueryPage id="query-page-show" :eventCode="eventId" :users="users" :currentCode="currentId"/>
+  <QueryPage id="query-page-show" :eventCode="eventId" :currentCode="currentId"/>
   <div class="users-list">
     <div v-if="notificationMessage" class="notification">
       {{ notificationMessage }}
