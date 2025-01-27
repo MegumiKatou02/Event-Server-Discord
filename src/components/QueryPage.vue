@@ -141,6 +141,7 @@ export default defineComponent({
   font-size: 2rem;
   margin-bottom: 1rem;
   text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.5);
+  cursor: pointer;
 }
 
 .search-wrapper {
