@@ -1,5 +1,5 @@
 <template>
-  <QueryPage id="query-page-show" :eventCode="eventId" :users="users" />
+  <QueryPage id="query-page-show" :eventCode="eventId" :users="users" :currentCode="currentId"/>
   <div class="users-list">
     <div v-if="notificationMessage" class="notification">
       {{ notificationMessage }}
@@ -53,7 +53,6 @@ import { db } from '@/config/firebase';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { useRoute, useRouter } from 'vue-router';
 import QueryPage from '@/components/QueryPage.vue';
-import { getDateEvent } from '@/services/firebaseService';
 import type { User } from '@/types/users';
 import { sendNotification } from '@/utils/notification';
 import { isPositiveInteger } from '@/utils/stringValidation';
@@ -69,6 +68,7 @@ export default defineComponent({
     const isEventExist = ref(true);
 
     const eventId = ref('1');
+    const currentId = ref('1');
     let currentEventId = '';
 
     provide('message', {
@@ -180,18 +180,9 @@ export default defineComponent({
 
       setTheme('theme-pink');
 
-      eventEndDate.value = new Date(await getDateEvent(eventId.value)).getTime();
-
-      const userCollection = collection(db, 'events', eventId.value, 'users');
-      const userSnapshot = await getDocs(userCollection);
-
-      users.value = userSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as User[];
-
       if ($route.query.event) {
         eventId.value = $route.query.event as string;
+        currentId.value = eventId.value;
       }
 
       if ($route.query.message) {
@@ -213,6 +204,7 @@ export default defineComponent({
       isEventOver,
       eventId,
       isEventExist,
+      currentId,
     }
   },
   components: {

@@ -1,6 +1,6 @@
 <template>
   <div class="main-container">
-    <h1 class="title">Event Code: {{ eventCode }}</h1>
+    <h1 @click="updateMessage(currentCode)" class="title">Event Code: {{ eventCode }}</h1>
     <div class="search-container">
       <div class="search-wrapper">
         <input
@@ -56,8 +56,12 @@ export default defineComponent({
   props: {
     eventCode: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
+    currentCode: {
+      type: String,
+      required: true,
+    },
   },
   setup() {
     const searchQuery = ref<string>('')
@@ -106,13 +110,13 @@ export default defineComponent({
       }
     }
 
-
     return {
       searchQuery,
       filterBy,
       sortOrder,
       handleSearch,
       applyFilters,
+      updateMessage
     }
   }
 })
