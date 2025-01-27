@@ -53,6 +53,7 @@ import { db } from '@/config/firebase';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { useRoute, useRouter } from 'vue-router';
 import QueryPage from '@/components/QueryPage.vue';
+import { CurrentEvent } from '@/services/firebaseService';
 import type { User } from '@/types/users';
 import { sendNotification } from '@/utils/notification';
 import { isPositiveInteger } from '@/utils/stringValidation';
@@ -180,9 +181,10 @@ export default defineComponent({
 
       setTheme('theme-pink');
 
+      currentId.value = (await CurrentEvent()).toString();
+
       if ($route.query.event) {
         eventId.value = $route.query.event as string;
-        currentId.value = eventId.value;
       }
 
       if ($route.query.message) {
