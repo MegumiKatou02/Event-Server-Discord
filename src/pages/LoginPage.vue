@@ -30,9 +30,6 @@
           </span>
         </a>
 
-        <!-- <router-link to="/users" class="login-button" style="margin-top: 1rem;">
-          <span class="button-content">Xem danh sách</span>
-        </router-link> -->
         <a class="login-button" style="margin-top: 1rem;" @click="redirectUsersList">
           <span class="button-content">Xem danh sách</span>
         </a>
